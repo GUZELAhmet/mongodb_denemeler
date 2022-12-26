@@ -1,0 +1,34 @@
+//=================================================
+//                   AGGREGATION
+//=================================================
+// 1) Aggregation, dokumanlardaki verilerin islenmesi ve hesaplanan
+//    sonuclarin donmesini saglayan islemlerdir.
+//
+// 2) Aggregation islemleri, farklı dokumanlardaki degerleri gruplandirabilir.
+//
+// 3) Bu gruplanan veriler uzerinde cesitli islemlerin gereceklestirelerek tek
+//    bir sonuc degerinin donmesi saglanabilir.
+//
+// 4) MongoDB, 3 farklı yontem ile aggregation gerceklestirmeye izin verir.
+//     A) aggregation pipeline (toplama boru hattı) --> best practice...
+//     B) map-reduce function (map indirgeme)
+//     C) single-purpose aggregation (tek-amaç toplama)
+//
+// 5) Aggregiation, SQL'deki Join islemlerine benzetilebilir.
+//=================================================
+//             AGGREGATION PIPELINE
+//=================================================
+// SYNTAX
+//
+//   pipeline = [
+//   { $match : { … },
+//   { $group : { … },
+//   { $sort : { … },
+//      ...
+//   ]
+//   db.collectionName.aggregate({pipeline}, {options})
+//
+//  $match() –> Verileri secerken flitrelemek icin
+//  $group({_id : "$field"}) - >islenen verilerin gruplanmasi icin
+//  $sort() -> Sonuclarin siralanmasi icin
+// NOT : VSCode ile yazıldığından , her komut önüne, use("DB_ismi") yazılmalı !!

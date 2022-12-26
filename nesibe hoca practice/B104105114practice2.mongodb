@@ -1,0 +1,128 @@
+***********
+PRACTICE-2
+***********
+
+//update document, delete document
+
+use ("school");
+db.students.insertOne({"name":"Peyami Safa",
+ "age":45,
+ "city":"İstanbul",
+ "grade":535,
+ "department":"Math",
+ "books":[{"name":"Math","category":"lessson"},
+          {"name":"Sefiller","category":"novel"}]})
+
+use ("school")
+db.students.insertOne({ "name":"John Steinbeck",
+ "age":55,
+ "city":"Bursa",
+ "grade":535,
+ "department":{"name":"IT","language":"tr"},
+ "points":[70,90,100 ]})
+
+use ("school");
+db.students.insertMany([
+ {"name":"Ahmet Ümit", "age":35, "city":"İstanbul","grade":463, "department":{"name":"IT","language":"tr"}},
+ {"name":"R.Nuri Güntekin",  "age":43, "city":"Ankara",  "grade":567, "department":{"name":"Math","language":"eng"}},
+ {"name":"S.Faik Abasıyanık","age":55, "city":"Antalya", "grade":409, "department":{"name":"Chemistry","language":"eng"}},
+ {"name":"Yaşar Kemal",      "age":23, "city":"İstanbul","grade":390, "department":{"name":"English","language":"eng"}},
+ {"name":"Halide E. Adıvar", "age":26, "city":"İzmir",   "grade":523, "department":{"name":"Math","language":"tr"}},
+ {"name":"Charles Dickens", "age":35, "city":"İstanbul","grade":463, "department":{"name":"IT","language":"eng"}},
+ {"name":"Nazan Bekiroğlu",  "age":49, "city":"Bursa",   "grade":387, "department":{"name":"English","language":"eng"}},
+ {"name":"Sabahattin Ali",   "age":53, "city":"İzmir",   "grade":427, "department":{"name":"Physics","language":"tr"}},
+ {"name":"Stephen King",   "age":53, "city":"İzmir",   "grade":523, "department":{"name":"Physics","language":"eng"}},
+ {"name":"Orhan Pamuk",      "age":56, "city":"Ankara",  "grade":486, "department":{"name":"Psychology","language":"tr"}},
+ {"name":"Rıfat Ilgaz" ,     "age":74, "city":"Antalya", "grade":519, "department":{"name":"IT","language":"eng"}},
+ {"name":"Lev Tolstoy" ,     "age":26, "city":"Antalya", "grade":520, "department":{"name":"IT","language":"eng"}}
+ ])
+
+//------------------------------------------------------------------------------
+//1)"students" collectionını yaşa(age) göre azalan şekilde sıralayınız.
+//------------------------------------------------------------------------------
+use ("school");
+db.students.find().sort({"age":-1})
+
+
+//------------------------------------------------------------------------------
+//2)"students" collectionında yaşça en büyük ikinci kişiyi
+// (name ve age) görüntüleyiniz.
+//------------------------------------------------------------------------------
+
+use("school");
+db.students.find({},{"name":1,"age":1,"_id":0}).sort({"age":-1}).skip(1).limit(1)
+
+
+
+//------------------------------------------------------------------------------
+//3)"students" collectionında yaşça en küçük kişiyi
+// (name ve age) görüntüleyiniz
+//------------------------------------------------------------------------------
+
+use("school");
+db.students.find({},{"name":1, "age":1, "_id":0}).sort({"age":1}).limit(1)
+
+use("school");
+db.students.findOne({},{"name":1, "age":1, "_id":0},{sort:{"age":1}})
+
+
+
+//------------------------------------------------------------------------------
+//4)"students" collectionında program dili Türkçe olan bölümde(department) okuyan
+// ve puanı(grade) 500 den 
+//fazla olan kişiyi/kişileri görüntüleyiniz.(name,department,grade)
+//------------------------------------------------------------------------------
+
+use ("school");
+db.students.find({$and:[{"department.language":"tr","grade":{$gt:500}}]},
+                {"name":1,"department":1,"grade":1,"_id":0})
+
+//------------------------------------------------------------------------------
+//5)"students" collectionında department ı IT, Math veya Chemistry olan kişileri 
+//isme göre artan sıralı görüntüleyiniz.(name,department)
+// kaç kişi olduğunu bulunuz.
+//------------------------------------------------------------------------------
+use ("school");
+db.students.find({"department.name":{$in:["IT","Math","Chemistry"]}},
+                {"name":1,"department":1,"_id":0} ).
+            sort({"name":1}).
+            
+//b şıkkı
+
+use ("school");
+db.students.find({"department.name":{$in:["IT","Math","Chemistry"]}},
+                {"name":1,"department":1,"_id":0} ).
+            sort({"name":1}).
+            count()
+
+
+
+//------------------------------------------------------------------------------
+//6)"students" collectionında citysi İstanbul,İzmir veya Ankara olan kişileri 
+//grade e göre azalan sıralı görüntüleyiniz.(name,city,grade)
+//------------------------------------------------------------------------------
+
+use ("school");
+db.students.find({"city":{$in:["İstanbul","İzmir","Ankara"]}},
+                 {"name":1,"city":1,"grade":1,"_id":0}).sort({"grade":-1})
+
+
+//------------------------------------------------------------------------------
+//7)"students" collectionında program dili eng olan bölümde(department) okuyan
+//veya yaşı(age) 35 veya 35 den küçük 
+//olan kişiyi/kişileri görüntüleyiniz.(name,department,age)
+//------------------------------------------------------------------------------
+use ("school");
+db.students.find({$or:[{"department.language":"eng"},{"age":{$lte:35}}]},
+                {"name":1,"age":1,"department":1,"_id":0})
+
+
+
+
+
+
+
+
+
+
+

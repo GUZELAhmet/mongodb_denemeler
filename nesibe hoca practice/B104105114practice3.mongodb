@@ -1,0 +1,218 @@
+***********
+PRACTICE-3
+***********
+
+***********
+//update document-delete document
+***********
+use ("school");
+db.students.insertOne({"name":"Peyami Safa",
+ "age":45,
+ "city":"İstanbul",
+ "grade":535,
+ "department":"Math",
+ "books":[{"name":"Math","category":"lessson"},
+          {"name":"Sefiller","category":"novel"}]})
+db.students.insertOne({ "name":"John Steinbeck",
+ "age":55,
+ "city":"Bursa",
+ "grade":435,
+ "department":{"name":"IT","language":"tr"},
+ "points":[70,90,100 ]})
+db.students.insertMany([
+ {"name":"Ahmet Ümit", "age":35, "city":"İstanbul","grade":463, "department":{"name":"IT","language":"tr"}},
+ {"name":"R.Nuri Güntekin",  "age":43, "city":"Ankara",  "grade":567, "department":{"name":"Math","language":"eng"}},
+ {"name":"S.Faik Abasıyanık","age":55, "city":"Antalya", "grade":409, "department":{"name":"Chemistry","language":"eng"}},
+ {"name":"Yaşar Kemal",      "age":23, "city":"İstanbul","grade":390, "department":{"name":"English","language":"eng"}},
+ {"name":"Halide E. Adıvar", "age":26, "city":"İzmir",   "grade":423, "department":{"name":"Math","language":"tr"}},
+ {"name":"Charles Dickens", "age":35, "city":"İstanbul","grade":463, "department":{"name":"IT","language":"eng"}},
+ {"name":"Nazan Bekiroğlu",  "age":49, "city":"Bursa",   "grade":387, "department":{"name":"English","language":"eng"}},
+ {"name":"Sabahattin Ali",   "age":53, "city":"İzmir",   "grade":427, "department":{"name":"Physics","language":"tr"}},
+ {"name":"Stephen King",   "age":53, "city":"İzmir",   "grade":523, "department":{"name":"Physics","language":"eng"}},
+ {"name":"Orhan Pamuk",      "age":56, "city":"Ankara",  "grade":486, "department":{"name":"Psychology","language":"tr"}},
+ {"name":"Rıfat Ilgaz" ,     "age":74, "city":"Antalya", "grade":519, "department":{"name":"IT","language":"eng"}},
+ {"name":"Lev Tolstoy" ,     "age":26, "city":"Antalya", "grade":520, "department":{"name":"IT","language":"eng"}}
+ ])
+
+
+
+//------------------------------------------------------------------------------
+1)"students" collectionında name i "Peyami Safa", olan kişinin bilgilerini 
+
+"name":"Peyami Safa",
+ "age":44,
+ "city":"İstanbul",
+ "grade":535,
+ "department":{"name":"Math","language":"tr"},
+ "books":[{"name":"Math","category":"lessson"},
+          {"name":"Sefiller","category":"novel"}]
+
+ile  değiştiriniz.
+//------------------------------------------------------------------------------
+
+use ("school");
+db.students.findOneAndReplace({"name":"Peyami Safa"},
+                              {"name":"Peyami Safa",
+                                "age":44,
+                                "city":"İstanbul",
+                                "grade":535,
+                                "department":{"name":"Math","language":"tr"},
+                                "books":[{"name":"Math","category":"lessson"},
+                                 {"name":"Sefiller","category":"novel"}]})
+
+
+//------------------------------------------------------------------------------
+2)"students" collectionında grade i 550 den küçük, grade i en yüksek kişinin
+sadece departmentını IT olarak güncelleyiniz.
+//------------------------------------------------------------------------------
+use ("school");
+db.students.findOneAndUpdate({"grade": {$lt:550}},
+                             {$set: {"department.name":"IT"}},
+                             {sort:{"grade":-1}})
+
+//------------------------------------------------------------------------------
+3)"students" collectionında yaşı(age) 23 olan kişinin ismini "Elif Şafak"
+olarak güncelleyiniz ve güncellenen documenti görüntüleyiniz.
+//------------------------------------------------------------------------------
+
+use ("school");
+db.students.findOneAndUpdate({"age":23},
+                             {$set:{"name":"Elif Şafak"}},
+                             {returnNewDocument:true})
+
+
+//------------------------------------------------------------------------------
+4)"students" collectionında ismi "Kemal Tahir"  olan varsa 
+ yaş(age):36,
+ city:Konya,
+ grade:411
+ department:Chemistry
+ olarak güncelleyiniz yoksa document ekleyiniz ve görüntüleyiniz.
+//------------------------------------------------------------------------------
+
+use ("school");
+db.students.findOneAndUpdate({"name":"Kemal Tahir"},
+                             {$set:{"age" : 36,"city": "Konya", "grade":411,"department":"Chemistry"}},
+                             {returnNewDocument:true,upsert:true})
+
+//------------------------------------------------------------------------------
+5)"students" collectionında İstanbulda yaşayanların citysini "Megakent"
+olarak güncelleyiniz ve güncellenen documenti görüntüleyiniz.
+//------------------------------------------------------------------------------
+
+use ("school");
+db.students.updateMany({"city":"İstanbul"},
+                       {$set:{"city": "Megakent"}},
+                       {returnNewDocument:true})
+
+//------------------------------------------------------------------------------
+6)"students" collectionında department ı "Physics" olan kişiyi siliniz.
+//------------------------------------------------------------------------------
+
+use ("school");
+db.students.deleteOne({"department.name":"Physics"})
+
+//------------------------------------------------------------------------------
+7)"students" collectionında yaşı 30 dan küçük veya 70 ten büyük olanları siliniz.
+//------------------------------------------------------------------------------
+
+use ("school");
+db.students.deleteMany({$or:[{"age":{$lt:30}},{"age":{$gt:70}}]})
+
+//------------------------------------------------------------------------------
+8)"students" collectionında tüm dökümanları siliniz.
+//------------------------------------------------------------------------------
+use ("school");
+db.students.remove({});
+
+
+
+
+
+
+
+
+
+
+
+**************
+//===aggregation pipeline
+// SYNTAX
+//
+// pipeline=[
+// {$match:{...}},
+// {$group:{...}},  
+// {$sort:{...}},
+//  ...
+//  ]
+//db.collectionName.aggregate(pipeline,options)
+//
+// $match->verileri seçerken filtrelemek için
+// $group({_id:"$field"})-> islenen verilerin gruplanması için
+// $sort->sonuçların sıralanması için
+**************
+
+//------------------------------------------------------------------------------
+9)"students" collectionında her bir şehir için yaş ortalamalarını bulunuz.
+//------------------------------------------------------------------------------
+
+use ("school");
+var pipeline = [
+                 {$match:{}},
+                 {$group:{"_id":"$city",avg_age:{$avg:"$age"}}}
+               ];
+db.students.aggregate(pipeline)
+
+//------------------------------------------------------------------------------
+10)"students" collectionında her bir department name için max grade i bulunuz.
+//------------------------------------------------------------------------------
+
+use ("school");
+var pipeline = [
+             {$match : {}} ,
+             {$group:{"_id":"$department.name", "max_grade":{$max:"$grade"}}}
+];
+db.students.aggregate(pipeline);
+
+//------------------------------------------------------------------------------
+11)"students" collectionında 40 yaşından büyüklerin her bir department için
+ min grade i bul.
+//------------------------------------------------------------------------------
+
+use ("school");
+var pipeline =[
+                {$match:{"age":{$gt:40}}},
+                {$group:{"_id":"$department.name", min_grade:{$min:"$grade"}}}
+              ];
+db.students.aggregate(pipeline);
+
+
+//------------------------------------------------------------------------------
+12)"students" collectionında ismi "k" ile bitenlerin toplam puanını bulunuz.
+//------------------------------------------------------------------------------
+
+use ("school");
+var pipeline =[
+                {$match:{"name":{$regex:"k$"}}},
+                {$group:{"_id":"", total_grade:{$sum:"$grade"}}}
+              ];
+db.students.aggregate(pipeline);
+
+
+
+//------------------------------------------------------------------------------
+13)"students" collectionında "Ankara"da yaşayanların sayısını bulunuz.
+//------------------------------------------------------------------------------
+
+use ("school");
+var pipeline =[
+                {$match:{"city":"Ankara"}},
+                {$count:"Ankarada yaşayanların sayısı: "}
+              ];
+db.students.aggregate(pipeline);
+
+
+//------------------------------------------------------------------------------
+14)"students" collectionında yaşı 30 dan büyük olanların sayısını bulunuz.
+//------------------------------------------------------------------------------
+****ödev***

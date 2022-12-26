@@ -1,0 +1,87 @@
+1// ekranı temizleme
+cls
+2// products isminde DB oluşturalım
+use products
+3// hangi Db deyim ?
+db
+4// databaseleri göster
+show dbs
+5// electronics isminde collc. oluştur
+db.createCollection("electronics")
+6// mevcut collectionları göster
+db.getCollectionNames()
+7//aktif collectionı silelim
+db.electronics.drop()
+8// collectiona 1 tane döküman ekliyelim
+db.electronics.insertOne({"price":230 , "name" : "TV"})
+// Trick : collection oluşturmadan doğrudan insertOne() metodu ile data girilebilir.
+
+9// Birden fazla döküman girelim
+db.electronics.insertMany([ {"name":"ipod" , "price" : 111},{"name":"iphone14"},{"name":"Radio", "price":53,"tax":10}])
+//Trick : insertMany komudu ile data girilirken elemanlar "[]"ile depolanır ve her bir döküman "{}" içine eklenir ve "," ile ayrılır
+//Trick-2 : [ ve { ler karışmaması için , 3 eleman gireceksem -->
+// [{},{},{}] gibi boş bir yapı oluşturalım
+
+10// tek veya birden fazla döküman girelim
+db.electronics.insert({"name":"iron" , "tax":12})
+db.electronics.insert([{"price":123},{"name":"radio" , "tax":8}])
+//Trick : insert() depricate edilmiş method
+
+11// collectionı silelim
+db.electronics.drop()
+
+12// Database i silelim
+db.dropDatabase()
+
+13// bütün dökümanları okuyalım
+db.electronics.find()
+veya 
+db.electronics.find().pretty()
+
+14// ilk 2 döküman gelsin
+db.electronics.find().limit(2)
+
+15// Sadece 3.dökümanı istersem
+db.electronics.find().skip(2).limit(1)
+
+16// 5. dökümandan itibaren ilk 2 dökümanı getirelim
+db.electronics.find().skip(4).limit(2)
+
+17// ismi (name) TV olanları getirelim
+db.electronics.find({"name":"TV"})
+
+18// ismi TV ve price bilgisi 230 olan dökümanları getirin
+db.electronics.find({"name":"TV","price":230})
+veya
+db.electronics.find({$and:[{"name":"TV"},{"price":230}]})
+
+19// ismi TV veya Radio olan dökümanı getiriniz
+db.electronics.find({$or : [{"name" : "TV"},{"name": "Radio"}]})
+
+20// Radio ların sadece fiyatlarını görelim
+db.electronics.find({"name": "Radio"},{"price":1})
+
+21//yukardaki task in çıktısında id bilgisi gözükmesin
+db.electronics.find({"name":"Radio"},{"price":1 ,"_id":0})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
